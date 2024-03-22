@@ -1,4 +1,3 @@
 <?php
-require_once 'app/core/index.php';
-
-Router::process();
+require_once('config.php');
+require_once('app/core/index.php');
