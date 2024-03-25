@@ -5,7 +5,7 @@ interface DB
 
     public function action($action, $table, $where = array());
 
-    public function get($table, $where);
+    public function get($table = null);
 
     public function delete($table, $where);
 
@@ -15,7 +15,7 @@ interface DB
 
     public function results();
 
-    public function first();
+    public function first($table);
 
     public function error();
 

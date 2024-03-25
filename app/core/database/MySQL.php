@@ -8,6 +8,13 @@ class MySQL implements DB
     private $_results;
     private $_count;
 
+    private $_table;
+    private $_select;
+    private $_limit;
+    private $_skip;
+    private $_where = array();
+    private $_joins = "";
+
     public static function getInstance()
     {
         if (!isset(self::$_instance)) {
@@ -46,7 +53,7 @@ class MySQL implements DB
             }
 
             if ($this->_query->execute()) {
-                $this->_results     = $this->_query->fetchAll(PDO::FETCH_OBJ);
+                $this->_results     = $this->_query->fetchAll(PDO::FETCH_ASSOC);
                 $this->_count       = $this->_query->rowCount();
             } else {
                 $this->_error = true;
@@ -76,10 +83,10 @@ class MySQL implements DB
         return false;
     }
 
-    public function get($table, $where)
-    {
-        return $this->action('SELECT *', $table, $where);
-    }
+    // public function get($table, $where)
+    // {
+    //     return $this->action('SELECT *', $table, $where);
+    // }
 
     public function delete($table, $where)
     {
@@ -137,14 +144,132 @@ class MySQL implements DB
         return false;
     }
 
+    public function from($table)
+    {
+        $this->_table = $table;
+    }
+
+    public function rightJoin($joinTable, $name, $operator, $value)
+    {
+        $this->_joins .= "RIGHT JOIN $joinTable ON $name $operator $value ";
+        return $this;
+    }
+
+    public function leftJoin($joinTable, $name, $operator, $value)
+    {
+        $this->_joins .= "LEFT JOIN $joinTable ON $name $operator $value ";
+        return $this;
+    }
+
+    public function where($param1 = array(), $param2 = null, $param3 = null)
+    {
+        if (is_array($param1)) {
+            $where = [];
+            foreach ($param1 as $name => $value) {
+                $where[] = array("name" => $name, "operator" => "=", "value" => $value);
+            }
+            $this->_where[] = array("type" => "AND", "conditions" => $where);
+        } else if ($param3 == null) {
+            $this->_where[] = array("type" => "AND", "conditions" => array(array("name" => $param1, "operator" => "=", "value" => $param2)));
+        } else {
+            $this->_where[] = array("type" => "AND", "conditions" => array(array("name" => $param1, "operator" => $param2, "value" => $param3)));
+        }
+        return $this;
+    }
+
+    public function select($select)
+    {
+        $this->_select = $select;
+    }
+
+    public function addSelect($select)
+    {
+        $this->_select .= ", " . $select;
+    }
+
+    public function limit($limit)
+    {
+        $this->_limit = $limit;
+    }
+
+    public function skip($skip)
+    {
+        $this->_skip = $skip;
+    }
+
+    public function get($table = null)
+    {
+        $select = empty($this->_select) ? "*" : $this->_select;
+        $table = empty($table) ? $this->_table : $table;
+        $where = empty($this->_where) ? "" : "WHERE " . $this->_renderWhere($this->_where, $table);
+
+        $join = empty($this->_joins) ? "" : $this->_joins;
+
+        $sql = "SELECT $select FROM $table $join $where ";
+
+        if ($this->_limit) {
+            $skip = empty($this->_skip) ? 0 : $this->_skip;
+            $sql .= "LIMIT $skip, " . $this->_limit;
+        }
+
+        $this->_query = $this->_pdo->prepare($sql);
+        if ($this->_query) {
+            if ($this->_query->execute()) {
+                $this->_results     = $this->_query->fetchAll(PDO::FETCH_ASSOC);
+                $this->_count       = $this->_query->rowCount();
+            } else {
+                $this->_error = true;
+            }
+        }
+        $this->_reset();
+        return $this->results();
+    }
+
+    private function _reset()
+    {
+        $this->_where = array();
+        $this->_table = "";
+        $this->_select = "";
+        $this->_limit = "";
+        $this->_skip = "";
+        $this->_joins = "";
+    }
+
+    private function _renderWhere($where, $table)
+    {
+        $sql = "";
+        foreach ($this->_where as $where) {
+            $conditions = $where["conditions"];
+            $type = $where["type"];
+            if ($type == "AND" && $sql != "") {
+                $sql .= " AND ";
+            } else if ($type == "OR" && $sql != "") {
+                $sql .= " OR ";
+            }
+            $sql .= "(";
+            $items = [];
+            foreach ($conditions as $condition) {
+                $name = $condition["name"];
+                $op = $condition["operator"];
+                $value = $condition["value"];
+                $items[] = "`$table`.`$name` $op '$value'";
+            }
+            $sql .= join(" AND ", $items);
+            $sql .= ")";
+        }
+        return $sql;
+    }
+
+    public function first($table)
+    {
+        $this->limit(1);
+        $results = $this->get($table);
+        return $results[0];
+    }
+
     public function results()
     {
         return $this->_results;
-    }
-
-    public function first()
-    {
-        return $this->results()[0];
     }
 
     public function error()
