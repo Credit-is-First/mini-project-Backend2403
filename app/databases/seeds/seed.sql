@@ -8,13 +8,13 @@ INSERT INTO `box_subscribers` VALUES (4, 4, 2);
 INSERT INTO `box_subscribers` VALUES (5, 5, 2);
 
 -- ----------------------------
--- Records of boxies
+-- Records of boxes
 -- ----------------------------
-INSERT INTO `boxies` VALUES (1, 'Orchard Tower', 1, 1);
-INSERT INTO `boxies` VALUES (2, 'United Square', 2, 1);
-INSERT INTO `boxies` VALUES (3, 'Thompson Plaza', 3, 1);
-INSERT INTO `boxies` VALUES (4, 'Peranakan Place', 4, 1);
-INSERT INTO `boxies` VALUES (5, 'Marina Boulevard', 5, 1);
+INSERT INTO `boxes` VALUES (1, 'Orchard Tower', 1, 1);
+INSERT INTO `boxes` VALUES (2, 'United Square', 2, 1);
+INSERT INTO `boxes` VALUES (3, 'Thompson Plaza', 3, 1);
+INSERT INTO `boxes` VALUES (4, 'Peranakan Place', 4, 1);
+INSERT INTO `boxes` VALUES (5, 'Marina Boulevard', 5, 1);
 
 -- ----------------------------
 -- Records of prayers

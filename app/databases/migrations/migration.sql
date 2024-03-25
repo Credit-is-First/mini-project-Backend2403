@@ -11,7 +11,7 @@ SET FOREIGN_KEY_CHECKS=0
 DROP TABLE IF EXISTS `box_subscribers` CASCADE
 ;
 
-DROP TABLE IF EXISTS `boxies` CASCADE
+DROP TABLE IF EXISTS `boxes` CASCADE
 ;
 
 DROP TABLE IF EXISTS `prayers` CASCADE
@@ -38,7 +38,7 @@ CREATE TABLE `box_subscribers`
 
 ;
 
-CREATE TABLE `boxies`
+CREATE TABLE `boxes`
 (
 	`box_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`box_name` VARCHAR(50) NOT NULL,
@@ -99,8 +99,8 @@ ALTER TABLE `schedules`
 /* Create Foreign Key Constraints */
 
 ALTER TABLE `box_subscribers` 
- ADD CONSTRAINT `FK_box_subscribers_boxies`
-	FOREIGN KEY (`box_id`) REFERENCES `boxies` (`box_id`) ON DELETE Restrict ON UPDATE Restrict
+ ADD CONSTRAINT `FK_box_subscribers_boxes`
+	FOREIGN KEY (`box_id`) REFERENCES `boxes` (`box_id`) ON DELETE Restrict ON UPDATE Restrict
 ;
 
 ALTER TABLE `box_subscribers` 
@@ -108,8 +108,8 @@ ALTER TABLE `box_subscribers`
 	FOREIGN KEY (`subs_id`) REFERENCES `subscribers` (`subs_id`) ON DELETE Cascade ON UPDATE Restrict
 ;
 
-ALTER TABLE `boxies` 
- ADD CONSTRAINT `FK_boxies_box_parayers`
+ALTER TABLE `boxes` 
+ ADD CONSTRAINT `FK_boxes_box_parayers`
 	FOREIGN KEY (`prayer_id`) REFERENCES `prayers` (`prayer_id`) ON DELETE Restrict ON UPDATE Restrict
 ;
 
@@ -119,8 +119,8 @@ ALTER TABLE `schedules`
 ;
 
 ALTER TABLE `songs` 
- ADD CONSTRAINT `FK_songs_boxies`
-	FOREIGN KEY (`box_id`) REFERENCES `boxies` (`box_id`) ON DELETE Restrict ON UPDATE Restrict
+ ADD CONSTRAINT `FK_songs_boxes`
+	FOREIGN KEY (`box_id`) REFERENCES `boxes` (`box_id`) ON DELETE Restrict ON UPDATE Restrict
 ;
 
 SET FOREIGN_KEY_CHECKS=1
