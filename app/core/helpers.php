@@ -33,3 +33,17 @@ function toFunctionName($string)
     $functionName = toClassName($string);
     return lcfirst($functionName);
 }
+
+function getOS()
+{
+    $os = PHP_OS;
+    if (strtoupper(substr($os, 0, 3)) === 'WIN') {
+        return "Windows";
+    } elseif (strtoupper(substr($os, 0, 5)) === 'LINUX') {
+        return "Linux";
+    } elseif (strtoupper(substr($os, 0, 6)) === 'DARWIN') {
+        return "macOS";
+    } else {
+        return "Unknown";
+    }
+}
