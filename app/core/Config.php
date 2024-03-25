@@ -4,17 +4,18 @@ class Config
     public static function get($path = null)
     {
         global $config;
+        $item = $config;
 
         if ($path) {
             $path = explode('.', $path);
 
             foreach ($path as $key) {
-                if (isset($config[$key])) {
-                    $config = $config[$key];
+                if (isset($item[$key])) {
+                    $item = $item[$key];
                 }
             }
 
-            return $config;
+            return $item;
         }
 
         return false;
