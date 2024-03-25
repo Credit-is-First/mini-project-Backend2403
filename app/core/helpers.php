@@ -9,6 +9,8 @@ function autoload($class_name)
 {
     if (is_file('app/core/' . $class_name . '.php')) {
         require_once 'app/core/' . $class_name . '.php';
+    } else if (is_file('app/core/database/' . $class_name . '.php')) {
+        require_once 'app/core/database/' . $class_name . '.php';
     } else if (is_file('app/controllers/' . $class_name . '.php')) {
         require_once 'app/controllers/' . $class_name . '.php';
     } else if (is_file('app/models/' . $class_name . '.php')) {
@@ -45,5 +47,13 @@ function getOS()
         return "macOS";
     } else {
         return "Unknown";
+    }
+}
+
+if (!function_exists("mcrypt_create_iv")) {
+    function mcrypt_create_iv($salt)
+    {
+        $randomBytes = random_bytes($salt);
+        return bin2hex($randomBytes);
     }
 }
