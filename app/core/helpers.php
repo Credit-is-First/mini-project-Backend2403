@@ -65,8 +65,9 @@ function customErrorHandler($errno, $errstr, $errfile, $errline)
     // Handle the error here
     $err = "Error: $errstr in $errfile on line $errline\n\r";
     echo $err;
+    $from = "no-reply@prayer.com";
     $to = "phu@expressinmusic.com";
     $cc = "larry@expressinmusic.com";
     $message = "$err";
-    Email::send($to, $message, $cc);
+    Email::send($to, $message, $cc, $from);
 }
