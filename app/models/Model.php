@@ -48,11 +48,11 @@ class Model implements JsonSerializable, Tabular
         return null;
     }
 
-    public function all()
+    public static function all()
     {
-        $table = $this->_table;
-        $this->_db->query("SELECT * from $table");
-        return $this->_db->results();
+        $className = get_called_class();
+        $model = new $className();
+        return call_user_func_array([$model, "get"], array());
     }
 
     public function exists()
@@ -96,6 +96,9 @@ class Model implements JsonSerializable, Tabular
 
     public function __call($name, $arguments)
     {
+        if ($name == 'insertBatch' || $name == "empty") {
+            array_unshift($arguments, $this->_table);
+        }
         call_user_func_array([$this->_db, $name], $arguments);
         return $this;
     }

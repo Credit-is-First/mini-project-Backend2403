@@ -120,6 +120,27 @@ class MySQL implements DB
         return false;
     }
 
+    public function insertBatch($table, $batch = array())
+    {
+        $sql = "";
+        $stmt = null;
+        $keys = array();
+        foreach ($batch as $fields) {
+            if ($sql == "") {
+                $keys = array_keys($fields);
+                $values = array_fill(0, count($keys), '?');
+                $sql = "INSERT INTO {$table} (`" . implode('`, `', $keys) . "`) VALUES (" . implode(', ', $values) . ")";
+
+                $stmt = $this->_pdo->prepare($sql);
+            }
+            $data = [];
+            foreach ($keys as $name) {
+                $data[] = $fields[$name];
+            }
+            $stmt->execute($data);
+        }
+    }
+
     public function update($table, $id, $fields)
     {
         $set    = '';
@@ -223,6 +244,27 @@ class MySQL implements DB
         }
         $this->_reset();
         return $this->results();
+    }
+
+    public function empty($table = null)
+    {
+        $sql = "DELETE FROM $table";
+        if (!$this->query($sql)->error()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function transaction($callback)
+    {
+        try {
+            $this->_pdo->beginTransaction();
+            call_user_func($callback);
+            $this->_pdo->commit();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            $this->_pdo->rollBack();
+        }
     }
 
     private function _reset()
