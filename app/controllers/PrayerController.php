@@ -31,7 +31,7 @@ class PrayerController extends Controller
         $prayer = Prayer::where("prayer_name", $prayer_name)->first();
 
         $today = date("Y-m-d");
-        $nextWeekDate = (new DateTime())->modify('+1 week')->format('Y-m-d');
+        $nextWeekDate = (new DateTime())->modify('+1 week')->modify('-1 day')->format('Y-m-d');
 
         $schedules = PraySchedule::leftJoin("boxes", "boxes.prayer_id", "=", "schedules.prayer_id")
             ->leftJoin("songs", "songs.box_id", "=", "boxes.box_id")
