@@ -68,6 +68,7 @@ class Model implements JsonSerializable, Tabular
     public function first()
     {
         $this->_data = $this->_db->first($this->_table);
+        if (empty($this->_data)) return null;
         return $this;
     }
 
@@ -76,7 +77,7 @@ class Model implements JsonSerializable, Tabular
         return $this->_db->get($this->_table);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->_data;
     }
