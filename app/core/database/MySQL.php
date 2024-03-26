@@ -198,6 +198,16 @@ class MySQL implements DB
         return $this;
     }
 
+    public function whereBetween($name, $from, $to)
+    {
+        $value = "'$from' AND '$to'";
+        if (is_numeric($from)) {
+            $value = "$from AND $to";
+        }
+        $this->_where[] = array("type" => "AND", "conditions" => array(["name" => $name, "operator" => "BETWEEN", "value" => $value]));
+        return $this;
+    }
+
     public function select($select)
     {
         $this->_select = $select;
@@ -294,7 +304,11 @@ class MySQL implements DB
                 $name = $condition["name"];
                 $op = $condition["operator"];
                 $value = $condition["value"];
-                $items[] = "`$table`.`$name` $op '$value'";
+                if ($op == "BETWEEN") {
+                    $items[] = "`$table`.`$name` $op $value";
+                } else {
+                    $items[] = "`$table`.`$name` $op '$value'";
+                }
             }
             $sql .= join(" AND ", $items);
             $sql .= ")";
