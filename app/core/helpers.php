@@ -15,6 +15,8 @@ function autoload($class_name)
         require_once 'app/controllers/' . $class_name . '.php';
     } else if (is_file('app/models/' . $class_name . '.php')) {
         require_once 'app/models/' . $class_name . '.php';
+    } else if (is_file('app/commands/' . $class_name . '.php')) {
+        require_once 'app/commands/' . $class_name . '.php';
     }
 }
 
