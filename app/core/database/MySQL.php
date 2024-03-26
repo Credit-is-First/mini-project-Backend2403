@@ -320,7 +320,10 @@ class MySQL implements DB
     {
         $this->limit(1);
         $results = $this->get($table);
-        return $results[0];
+        if ($this->count() > 0) {
+            return $results[0];
+        }
+        return null;
     }
 
     public function results()
